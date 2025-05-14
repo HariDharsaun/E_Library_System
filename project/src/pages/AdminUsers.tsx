@@ -42,15 +42,17 @@ const AdminUsers: React.FC = () => {
   );
 
   const getUserTransactionsByUserId = (userId: string) => {
-    return transactions.filter(transaction => 
-      (typeof transaction.user === 'string' && transaction.user === userId) ||
-      (typeof transaction.user === 'object' && transaction.user.id === userId)
-    );
+    return transactions.filter(transaction => {
+      if (typeof transaction.user === 'string') {
+        return transaction.user === userId;
+      }
+      return transaction.user && (transaction.user._id === userId || transaction.user.id === userId);
+    });
   };
 
   const getActiveTransactions = (userId: string) => {
-    return getUserTransactionsByUserId(userId).filter(
-      transaction => transaction.status === 'issued'
+    return getUserTransactionsByUserId(userId).filter(transaction => 
+      transaction.status === 'issued' && !transaction.returnDate
     );
   };
 
@@ -111,12 +113,12 @@ const AdminUsers: React.FC = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredUsers.map(user => {
-                  const activeTransactions = getActiveTransactions(user.id);
-                  const overdueTransactions = getOverdueTransactions(user.id);
-                  const isExpanded = expandedUser === user.id;
+                  const activeTransactions = getActiveTransactions(user._id);
+                  const overdueTransactions = getOverdueTransactions(user._id);
+                  const isExpanded = expandedUser === user._id;
                   
                   return (
-                    <React.Fragment key={user.id}>
+                    <React.Fragment key={user._id}>
                       <tr className={isExpanded ? 'bg-blue-50' : ''}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
@@ -153,7 +155,7 @@ const AdminUsers: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <button
-                            onClick={() => toggleExpandUser(user.id)}
+                            onClick={() => toggleExpandUser(user._id)}
                             className="inline-flex items-center text-blue-600 hover:text-blue-900"
                           >
                             {isExpanded ? (

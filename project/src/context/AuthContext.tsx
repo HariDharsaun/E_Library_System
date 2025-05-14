@@ -15,6 +15,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
+  adminLogin: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isAdmin: boolean;
@@ -26,6 +27,7 @@ export const AuthContext = createContext<AuthContextType>({
   loading: false,
   error: null,
   login: async () => {},
+  adminLogin: async () => {},
   register: async () => {},
   logout: () => {},
   isAdmin: false,
@@ -78,7 +80,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, [token]);
 
-  // Login user
+  // Admin login
+  const adminLogin = async (email: string, password: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.post(`${API_URL}/auth/admin/login`, {
+        email,
+        password,
+      });
+      
+      setToken(response.data.token);
+      setUser(response.data.user);
+      setIsAdmin(response.data.user.role === 'admin');
+      
+      toast.success('Admin login successful!');
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Admin login failed';
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Regular user login
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
@@ -145,6 +172,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         loading,
         error,
         login,
+        adminLogin,
         register,
         logout,
         isAdmin,

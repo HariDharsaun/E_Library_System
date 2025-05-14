@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage';
 import BooksPage from './pages/BooksPage';
 import BookDetailsPage from './pages/BookDetailsPage';
 import MyBooksPage from './pages/MyBooksPage';
+import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminBooks from './pages/AdminBooks';
 import AdminUsers from './pages/AdminUsers';
@@ -27,9 +28,6 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/books" element={<AdminBooks />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/books" element={<BooksPage />} />
               <Route path="/books/:id" element={<BookDetailsPage />} />
               
@@ -40,18 +38,14 @@ function App() {
               />
               
               {/* Admin routes */}
-              <Route 
-                path="/admin" 
-                element={<AdminRoute element={<AdminDashboard />} />} 
-              />
-              <Route 
-                path="/admin/books" 
-                element={<AdminRoute element={<AdminBooks />} />} 
-              />
-              <Route 
-                path="/admin/users" 
-                element={<AdminRoute element={<AdminUsers />} />} 
-              />
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin/*" element={<AdminRoute element={
+                <Routes>
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="books" element={<AdminBooks />} />
+                  <Route path="users" element={<AdminUsers />} />
+                </Routes>
+              } />} />
             </Routes>
           </main>
           <Footer />

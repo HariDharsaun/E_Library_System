@@ -1,5 +1,6 @@
 export interface User {
-  id: string;
+  _id: string;
+  id?: string;
   name: string;
   email: string;
   role: string;
@@ -25,7 +26,7 @@ export interface Transaction {
   issueDate: string;
   dueDate: string;
   returnDate?: string;
-  status: 'issued' | 'returned';
+  status: 'issued' | 'returned' | 'borrowed';
   fine: number;
   finePaid: boolean;
   notificationSent: {
